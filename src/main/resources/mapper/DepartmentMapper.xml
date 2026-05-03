@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.healthware.mapper.DepartmentMapper">
+
+    <select id="selectWithDoctorCount" resultType="com.healthware.vo.DepartmentVO">
+        SELECT d.id, d.name, d.description, d.location, d.phone, d.status, d.sort_order AS sortOrder,
+               COUNT(doc.id) AS doctorCount
+        FROM department d
+        LEFT JOIN doctor doc ON doc.department_id = d.id AND doc.status = 1
+        GROUP BY d.id
+        ORDER BY d.sort_order
+    </select>
+
+</mapper>

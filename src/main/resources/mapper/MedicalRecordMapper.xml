@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.healthware.mapper.MedicalRecordMapper">
+
+    <select id="selectDetailById" resultType="com.healthware.vo.MedicalRecordVO">
+        SELECT mr.id, mr.patient_id AS patientId, pt.name AS patientName,
+               mr.doctor_id AS doctorId, d.name AS doctorName,
+               mr.registration_id AS registrationId,
+               mr.chief_complaint AS chiefComplaint, mr.present_illness AS presentIllness,
+               mr.past_history AS pastHistory, mr.physical_exam AS physicalExam,
+               mr.diagnosis, mr.treatment_plan AS treatmentPlan,
+               mr.doctor_advice AS doctorAdvice, mr.visit_date AS visitDate,
+               mr.create_time AS createTime
+        FROM medical_record mr
+        LEFT JOIN patient pt ON pt.id = mr.patient_id
+        LEFT JOIN doctor d ON d.id = mr.doctor_id
+        WHERE mr.id = #{id}
+    </select>
+
+    <select id="selectByPatientId" resultType="com.healthware.vo.MedicalRecordVO">
+        SELECT mr.id, mr.patient_id AS patientId, pt.name AS patientName,
+               mr.doctor_id AS doctorId, d.name AS doctorName,
+               mr.registration_id AS registrationId,
+               mr.chief_complaint AS chiefComplaint, mr.present_illness AS presentIllness,
+               mr.past_history AS pastHistory, mr.physical_exam AS physicalExam,
+               mr.diagnosis, mr.treatment_plan AS treatmentPlan,
+               mr.doctor_advice AS doctorAdvice, mr.visit_date AS visitDate,
+               mr.create_time AS createTime
+        FROM medical_record mr
+        LEFT JOIN patient pt ON pt.id = mr.patient_id
+        LEFT JOIN doctor d ON d.id = mr.doctor_id
+        WHERE mr.patient_id = #{patientId}
+        ORDER BY mr.visit_date DESC
+    </select>
+
+</mapper>

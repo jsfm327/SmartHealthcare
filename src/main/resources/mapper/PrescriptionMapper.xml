@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.healthware.mapper.PrescriptionMapper">
+
+    <select id="selectDetailById" resultType="com.healthware.vo.PrescriptionVO">
+        SELECT p.id, p.registration_id AS registrationId,
+               p.doctor_id AS doctorId, d.name AS doctorName,
+               p.patient_id AS patientId, pt.name AS patientName,
+               p.diagnosis, p.medicine_list AS medicineList,
+               p.total_amount AS totalAmount, p.notes, p.status,
+               p.create_time AS createTime
+        FROM prescription p
+        LEFT JOIN doctor d ON d.id = p.doctor_id
+        LEFT JOIN patient pt ON pt.id = p.patient_id
+        WHERE p.id = #{id}
+    </select>
+
+    <select id="selectByRegistrationId" resultType="com.healthware.vo.PrescriptionVO">
+        SELECT p.id, p.registration_id AS registrationId,
+               p.doctor_id AS doctorId, d.name AS doctorName,
+               p.patient_id AS patientId, pt.name AS patientName,
+               p.diagnosis, p.medicine_list AS medicineList,
+               p.total_amount AS totalAmount, p.notes, p.status,
+               p.create_time AS createTime
+        FROM prescription p
+        LEFT JOIN doctor d ON d.id = p.doctor_id
+        LEFT JOIN patient pt ON pt.id = p.patient_id
+        WHERE p.registration_id = #{registrationId}
+    </select>
+
+</mapper>

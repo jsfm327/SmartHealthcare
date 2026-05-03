@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.healthware.mapper.ScheduleMapper">
+
+    <select id="selectWithDetail" resultType="com.healthware.vo.ScheduleVO">
+        SELECT s.id, s.doctor_id AS doctorId, d.name AS doctorName,
+               s.room_id AS roomId, r.name AS roomName,
+               s.schedule_date AS scheduleDate, s.time_slot AS timeSlot,
+               s.start_time AS startTime, s.end_time AS endTime,
+               s.max_appointments AS maxAppointments, s.current_appointments AS currentAppointments,
+               s.status
+        FROM schedule s
+        LEFT JOIN doctor d ON d.id = s.doctor_id
+        LEFT JOIN room r ON r.id = s.room_id
+        <where>
+            <if test="date != null">
+                AND s.schedule_date = #{date}
+            </if>
+            <if test="deptId != null">
+                AND d.department_id = #{deptId}
+            </if>
+        </where>
+        ORDER BY s.schedule_date DESC, s.start_time
+    </select>
+
+    <select id="selectByDoctorId" resultType="com.healthware.vo.ScheduleVO">
+        SELECT s.id, s.doctor_id AS doctorId, d.name AS doctorName,
+               s.room_id AS roomId, r.name AS roomName,
+               s.schedule_date AS scheduleDate, s.time_slot AS timeSlot,
+               s.start_time AS startTime, s.end_time AS endTime,
+               s.max_appointments AS maxAppointments, s.current_appointments AS currentAppointments,
+               s.status
+        FROM schedule s
+        LEFT JOIN doctor d ON d.id = s.doctor_id
+        LEFT JOIN room r ON r.id = s.room_id
+        WHERE s.doctor_id = #{doctorId}
+        ORDER BY s.schedule_date DESC
+    </select>
+
+    <update id="incrementCurrent">
+        UPDATE schedule SET current_appointments = current_appointments + 1 WHERE id = #{id}
+    </update>
+
+    <update id="decrementCurrent">
+        UPDATE schedule SET current_appointments = current_appointments - 1 WHERE id = #{id} AND current_appointments > 0
+    </update>
+
+</mapper>
