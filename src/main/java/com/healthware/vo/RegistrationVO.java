@@ -18,8 +18,6 @@ public class RegistrationVO {
     private String doctorName;
     private Long departmentId;
     private String departmentName;
-    private Long roomId;
-    private String roomName;
     private LocalDate registrationDate;
     private Integer timeSlot;
     private Integer queueNumber;

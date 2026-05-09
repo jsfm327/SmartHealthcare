@@ -26,9 +26,13 @@ public enum ResultCode {
     REGISTRATION_NOT_FOUND(2004, "挂号记录不存在"),
     REGISTRATION_CANCELLED(2005, "挂号已取消"),
 
+    // 医生相关 1xxx
+    DOCTOR_NOT_FOUND(1006, "医生账号不存在"),
+    DOCTOR_PASSWORD_ERROR(1007, "医生密码错误"),
+    DOCTOR_DISABLED(1008, "医生账号已被禁用"),
+
     // 业务相关 3xxx
     DEPARTMENT_NOT_FOUND(3001, "科室不存在"),
-    DOCTOR_NOT_FOUND(3002, "医生不存在"),
     PATIENT_NOT_FOUND(3003, "患者不存在"),
     CONSULT_FAILED(3004, "AI问诊失败，请稍后重试");
 

@@ -10,6 +10,9 @@ import com.healthware.entity.Admin;
 import com.healthware.entity.User;
 import com.healthware.exception.BusinessException;
 import com.healthware.mapper.AdminMapper;
+import com.healthware.mapper.DepartmentMapper;
+import com.healthware.mapper.DoctorMapper;
+import com.healthware.mapper.RegistrationMapper;
 import com.healthware.mapper.UserMapper;
 import com.healthware.service.AdminService;
 import com.healthware.utils.JwtUtil;
@@ -36,6 +39,15 @@ public class AdminServiceImpl implements AdminService {
 
     @Autowired
     private UserMapper userMapper;
+
+    @Autowired
+    private DoctorMapper doctorMapper;
+
+    @Autowired
+    private DepartmentMapper departmentMapper;
+
+    @Autowired
+    private RegistrationMapper registrationMapper;
 
     @Autowired
     private JwtUtil jwtUtil;
@@ -125,9 +137,14 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public Map<String, Object> getStatistics() {
         Map<String, Object> stats = new HashMap<>();
-        stats.put("totalUsers", userMapper.selectCount(null));
-        stats.put("totalAdmins", adminMapper.selectCount(null));
-        // 更多统计可扩展
+        stats.put("userCount", userMapper.selectCount(null));
+        stats.put("doctorCount", doctorMapper.selectCount(null));
+        stats.put("departmentCount", departmentMapper.selectCount(null));
+        java.time.LocalDate today = java.time.LocalDate.now();
+        Long todayCount = registrationMapper.selectCount(
+                new LambdaQueryWrapper<com.healthware.entity.Registration>()
+                        .eq(com.healthware.entity.Registration::getRegistrationDate, today));
+        stats.put("todayRegistrationCount", todayCount);
         return stats;
     }
 }

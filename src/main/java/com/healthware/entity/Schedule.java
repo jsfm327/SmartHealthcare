@@ -14,7 +14,6 @@ public class Schedule {
     @TableId(type = IdType.AUTO)
     private Long id;
     private Long doctorId;
-    private Long roomId;
     private LocalDate scheduleDate;
     private Integer timeSlot;
     private LocalTime startTime;

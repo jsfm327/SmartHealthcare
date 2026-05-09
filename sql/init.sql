@@ -62,6 +62,8 @@ CREATE TABLE IF NOT EXISTS `department` (
 -- ============================================
 CREATE TABLE IF NOT EXISTS `doctor` (
     `id` BIGINT PRIMARY KEY AUTO_INCREMENT COMMENT '医生ID',
+    `username` VARCHAR(50) NOT NULL UNIQUE COMMENT '登录账号',
+    `password` VARCHAR(255) NOT NULL COMMENT '密码（MD5加密）',
     `name` VARCHAR(50) NOT NULL COMMENT '医生姓名',
     `gender` TINYINT DEFAULT 0 COMMENT '性别：0未知 1男 2女',
     `department_id` BIGINT NOT NULL COMMENT '所属科室ID',
@@ -77,27 +79,11 @@ CREATE TABLE IF NOT EXISTS `doctor` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='医生表';
 
 -- ============================================
--- 5. 诊室表
--- ============================================
-CREATE TABLE IF NOT EXISTS `room` (
-    `id` BIGINT PRIMARY KEY AUTO_INCREMENT COMMENT '诊室ID',
-    `name` VARCHAR(50) NOT NULL COMMENT '诊室名称',
-    `department_id` BIGINT COMMENT '所属科室ID',
-    `location` VARCHAR(100) COMMENT '诊室位置',
-    `capacity` INT DEFAULT 1 COMMENT '每时段最大接诊量',
-    `status` TINYINT DEFAULT 1 COMMENT '状态：0停用 1正常',
-    `create_time` DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-    `update_time` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
-    FOREIGN KEY (`department_id`) REFERENCES `department`(`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='诊室表';
-
--- ============================================
--- 6. 排班时段表
+-- 5. 排班时段表
 -- ============================================
 CREATE TABLE IF NOT EXISTS `schedule` (
     `id` BIGINT PRIMARY KEY AUTO_INCREMENT COMMENT '排班ID',
     `doctor_id` BIGINT NOT NULL COMMENT '医生ID',
-    `room_id` BIGINT NOT NULL COMMENT '诊室ID',
     `schedule_date` DATE NOT NULL COMMENT '排班日期',
     `time_slot` TINYINT NOT NULL COMMENT '时段：1上午 2下午',
     `start_time` TIME NOT NULL COMMENT '开始时间',
@@ -108,8 +94,7 @@ CREATE TABLE IF NOT EXISTS `schedule` (
     `create_time` DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     `update_time` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
     UNIQUE KEY `uk_doctor_date_slot` (`doctor_id`, `schedule_date`, `time_slot`),
-    FOREIGN KEY (`doctor_id`) REFERENCES `doctor`(`id`),
-    FOREIGN KEY (`room_id`) REFERENCES `room`(`id`)
+    FOREIGN KEY (`doctor_id`) REFERENCES `doctor`(`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='排班时段表';
 
 -- ============================================
@@ -142,7 +127,6 @@ CREATE TABLE IF NOT EXISTS `registration` (
     `patient_id` BIGINT NOT NULL COMMENT '患者ID',
     `doctor_id` BIGINT NOT NULL COMMENT '医生ID',
     `department_id` BIGINT NOT NULL COMMENT '科室ID',
-    `room_id` BIGINT COMMENT '诊室ID',
     `schedule_id` BIGINT NOT NULL COMMENT '排班ID',
     `registration_date` DATE NOT NULL COMMENT '就诊日期',
     `time_slot` TINYINT NOT NULL COMMENT '时段：1上午 2下午',
@@ -155,7 +139,6 @@ CREATE TABLE IF NOT EXISTS `registration` (
     FOREIGN KEY (`patient_id`) REFERENCES `patient`(`id`),
     FOREIGN KEY (`doctor_id`) REFERENCES `doctor`(`id`),
     FOREIGN KEY (`department_id`) REFERENCES `department`(`id`),
-    FOREIGN KEY (`room_id`) REFERENCES `room`(`id`),
     FOREIGN KEY (`schedule_id`) REFERENCES `schedule`(`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='挂号记录表';
 
@@ -167,7 +150,7 @@ CREATE TABLE IF NOT EXISTS `consult_record` (
     `user_id` BIGINT NOT NULL COMMENT '用户ID',
     `title` VARCHAR(100) COMMENT '问诊标题',
     `symptoms` TEXT COMMENT '症状描述',
-    `ai_response` TEXT COMMENT 'AI回复内容',
+    `ai_response` LONGTEXT COMMENT 'AI回复内容',
     `department_suggest` VARCHAR(50) COMMENT '建议就诊科室',
     `status` TINYINT DEFAULT 1 COMMENT '状态：0已结束 1进行中',
     `create_time` DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
@@ -200,7 +183,6 @@ CREATE TABLE IF NOT EXISTS `prescription` (
     `registration_id` BIGINT NOT NULL COMMENT '关联挂号ID',
     `doctor_id` BIGINT NOT NULL COMMENT '开方医生ID',
     `patient_id` BIGINT NOT NULL COMMENT '患者ID',
-    `diagnosis` VARCHAR(255) COMMENT '诊断结果',
     `medicine_list` TEXT COMMENT '药品清单（JSON格式）',
     `total_amount` DECIMAL(10,2) COMMENT '总金额',
     `notes` TEXT COMMENT '医嘱备注',
@@ -237,7 +219,14 @@ CREATE TABLE IF NOT EXISTS `medical_record` (
 
 -- ============================================
 -- 插入默认管理员账号
--- 密码: admin123 (MD5加密)
+-- 密码: 123456 (MD5加密)
 -- ============================================
 INSERT INTO `admin` (`username`, `password`, `real_name`, `role`, `status`)
-VALUES ('admin', 'e10adc3949ba59abbe56e057f20f883e', '超级管理员', 2, 1);
+VALUES ('admin', '54782f12e2fa0a2bcc89ec90533de8f1', '超级管理员', 2, 1);
+
+-- ============================================
+-- 插入默认医生账号
+-- 密码: doctor123 (MD5加密)
+-- ============================================
+INSERT INTO `doctor` (`username`, `password`, `name`, `gender`, `department_id`, `title`, `specialty`, `status`)
+VALUES ('doctor', 'e10adc3949ba59abbe56e057f20f883e', '张医生', 1, 1, '主任医师', '内科常见病', 1);

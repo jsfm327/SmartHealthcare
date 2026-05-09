@@ -1,10 +1,10 @@
 package com.healthware.service.impl;
 
-import com.alibaba.fastjson2.JSONObject;
 import com.healthware.entity.ConsultRecord;
 import com.healthware.mapper.ConsultRecordMapper;
 import com.healthware.service.ConsultService;
 import com.healthware.vo.ConsultVO;
+import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,29 +13,47 @@ import java.util.List;
 @Service
 public class ConsultServiceImpl implements ConsultService {
 
-    // TODO: 启用 Spring AI 后取消注释
-    // @Autowired
-    // private ChatClient chatClient;
+    @Autowired
+    private ChatClient chatClient;
 
     @Autowired
     private ConsultRecordMapper consultRecordMapper;
 
+    private static final String SYSTEM_PROMPT = """
+            你是一个专业的智能医疗问诊助手。请严格按照以下结构回复，每个部分用对应标题开头：
+
+            【症状分析】
+            对患者描述的症状进行专业分析，归纳主要症状表现。
+
+            【可能原因】
+            列出2-3种可能的病因，每种简要说明理由。
+
+            【建议】
+            给出日常生活注意事项和就医前的自我护理建议。
+
+            【建议科室】
+            只输出一个最匹配的科室名称，不要其他内容。
+
+            注意：你仅提供参考建议，不能开具处方或做出诊断。
+            """;
+
     @Override
     public ConsultVO askQuestion(Long userId, String symptoms) {
-        // TODO: 启用 Spring AI 后恢复大模型调用
-        String response = "{\"analysis\":\"功能开发中，即将接入AI大模型\",\"advice\":\"请前往医院就诊\",\"department\":\"内科\"}";
-
-        String analysis = "功能开发中，即将接入AI大模型";
-        String advice = "请前往医院就诊";
-        String department = "内科";
+        String response;
         try {
-            JSONObject result = JSONObject.parseObject(response);
-            analysis = result.getString("analysis");
-            advice = result.getString("advice");
-            department = result.getString("department");
+            response = chatClient.prompt()
+                    .system(SYSTEM_PROMPT)
+                    .user(symptoms)
+                    .call()
+                    .content();
         } catch (Exception e) {
-            analysis = response;
+            response = "【症状分析】AI服务暂时不可用\n【可能原因】网络或服务异常\n【建议】请稍后重试或前往医院就诊\n【建议科室】内科";
         }
+
+        String analysis = extractSection(response, "症状分析");
+        String advice = extractSection(response, "可能原因") + "\n\n" + extractSection(response, "建议");
+        String department = extractSection(response, "建议科室");
+        if (department.isEmpty()) department = "内科";
 
         ConsultRecord record = new ConsultRecord();
         record.setUserId(userId);
@@ -58,6 +76,20 @@ public class ConsultServiceImpl implements ConsultService {
         return vo;
     }
 
+    private String extractSection(String text, String sectionName) {
+        if (text == null) return "";
+        String marker = "【" + sectionName + "】";
+        int start = text.indexOf(marker);
+        if (start < 0) return "";
+        start += marker.length();
+        while (start < text.length() && (text.charAt(start) == '\n' || text.charAt(start) == '\r')) {
+            start++;
+        }
+        int end = text.indexOf("【", start);
+        if (end < 0) end = text.length();
+        return text.substring(start, end).trim();
+    }
+
     @Override
     public List<ConsultVO> history(Long userId) {
         List<ConsultRecord> records = consultRecordMapper.selectByUserId(userId);
@@ -66,6 +98,8 @@ public class ConsultServiceImpl implements ConsultService {
             vo.setId(r.getId());
             vo.setTitle(r.getTitle());
             vo.setSymptoms(r.getSymptoms());
+            vo.setAnalysis(extractSection(r.getAiResponse(), "症状分析"));
+            vo.setAdvice(extractSection(r.getAiResponse(), "可能原因") + "\n\n" + extractSection(r.getAiResponse(), "建议"));
             vo.setDepartmentSuggest(r.getDepartmentSuggest());
             vo.setStatus(r.getStatus());
             vo.setCreateTime(r.getCreateTime());
@@ -77,11 +111,13 @@ public class ConsultServiceImpl implements ConsultService {
     public ConsultVO getDetail(Long id) {
         ConsultRecord record = consultRecordMapper.selectById(id);
         if (record == null) return null;
+
         ConsultVO vo = new ConsultVO();
         vo.setId(record.getId());
         vo.setTitle(record.getTitle());
         vo.setSymptoms(record.getSymptoms());
-        vo.setAnalysis(record.getAiResponse());
+        vo.setAnalysis(extractSection(record.getAiResponse(), "症状分析"));
+        vo.setAdvice(extractSection(record.getAiResponse(), "可能原因") + "\n\n" + extractSection(record.getAiResponse(), "建议"));
         vo.setDepartmentSuggest(record.getDepartmentSuggest());
         vo.setStatus(record.getStatus());
         vo.setCreateTime(record.getCreateTime());

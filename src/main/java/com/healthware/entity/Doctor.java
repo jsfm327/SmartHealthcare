@@ -11,6 +11,8 @@ public class Doctor {
 
     @TableId(type = IdType.AUTO)
     private Long id;
+    private String username;
+    private String password;
     private String name;
     private Integer gender;
     private Long departmentId;

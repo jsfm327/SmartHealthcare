@@ -14,7 +14,6 @@ public class PrescriptionVO {
     private String doctorName;
     private Long patientId;
     private String patientName;
-    private String diagnosis;
     private String medicineList;
     private BigDecimal totalAmount;
     private String notes;

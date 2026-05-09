@@ -13,6 +13,8 @@ import com.healthware.utils.JwtUtil;
 import com.healthware.utils.PasswordUtil;
 import com.healthware.utils.RedisUtil;
 import com.healthware.vo.LoginVO;
+
+import java.time.LocalDateTime;
 import com.healthware.vo.UserVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -127,6 +129,7 @@ public class UserServiceImpl implements UserService {
         userMapper.updateLoginFailCount(userId, count);
         if (count >= Constants.MAX_LOGIN_FAIL_COUNT) {
             user.setStatus(Constants.STATUS_DISABLED);
+            user.setLockTime(LocalDateTime.now());
             userMapper.updateById(user);
         }
     }

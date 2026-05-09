@@ -18,4 +18,8 @@ public interface RegistrationMapper extends BaseMapper<Registration> {
     int countByPatientAndDate(@Param("patientId") Long patientId, @Param("date") String date);
 
     String selectMaxRegistrationNo(@Param("datePrefix") String datePrefix);
+
+    int expirePastRegistrations(@Param("today") String today);
+
+    List<RegistrationVO> selectByDoctorId(@Param("doctorId") Long doctorId);
 }

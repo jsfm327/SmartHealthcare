@@ -1,5 +1,6 @@
 package com.healthware.service;
 
+import com.healthware.common.PageResult;
 import com.healthware.dto.MedicalRecordDTO;
 import com.healthware.vo.MedicalRecordVO;
 
@@ -14,4 +15,6 @@ public interface MedicalRecordService {
     List<MedicalRecordVO> listByPatient(Long patientId);
 
     void updateRecord(Long id, MedicalRecordDTO dto);
+
+    PageResult<MedicalRecordVO> listAll(int page, int size);
 }

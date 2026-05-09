@@ -34,6 +34,14 @@ public class PrescriptionServiceImpl implements PrescriptionService {
     }
 
     @Override
+    public void updatePrescription(Long id, PrescriptionDTO dto) {
+        Prescription prescription = new Prescription();
+        BeanUtils.copyProperties(dto, prescription);
+        prescription.setId(id);
+        prescriptionMapper.updateById(prescription);
+    }
+
+    @Override
     public void confirmDispense(Long id) {
         Prescription prescription = prescriptionMapper.selectById(id);
         if (prescription == null) return;

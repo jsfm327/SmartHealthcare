@@ -14,6 +14,8 @@ public interface ScheduleService {
 
     List<ScheduleVO> listByDate(String date);
 
+    ScheduleVO getDetail(Long id);
+
     void addSchedule(ScheduleDTO dto);
 
     void updateSchedule(Long id, ScheduleDTO dto);

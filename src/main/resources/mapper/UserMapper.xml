@@ -18,4 +18,8 @@
         UPDATE user SET status = 1, login_fail_count = 0, lock_time = NULL WHERE id = #{id}
     </update>
 
+    <select id="selectLockedUsersBefore" resultType="com.healthware.entity.User">
+        SELECT * FROM user WHERE status = 0 AND lock_time IS NOT NULL AND lock_time &lt; #{dateTime}
+    </select>
+
 </mapper>

@@ -5,6 +5,9 @@ import com.healthware.entity.User;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 @Mapper
 public interface UserMapper extends BaseMapper<User> {
 
@@ -15,4 +18,6 @@ public interface UserMapper extends BaseMapper<User> {
     int updateLoginFailCount(@Param("id") Long id, @Param("count") int count);
 
     int unlockUser(@Param("id") Long id);
+
+    List<User> selectLockedUsersBefore(@Param("dateTime") LocalDateTime dateTime);
 }

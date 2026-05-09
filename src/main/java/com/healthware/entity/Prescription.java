@@ -15,7 +15,6 @@ public class Prescription {
     private Long registrationId;
     private Long doctorId;
     private Long patientId;
-    private String diagnosis;
     private String medicineList;
     private BigDecimal totalAmount;
     private String notes;

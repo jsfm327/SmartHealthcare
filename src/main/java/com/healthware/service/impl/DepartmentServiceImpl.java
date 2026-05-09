@@ -6,10 +6,13 @@ import com.healthware.common.PageResult;
 import com.healthware.common.ResultCode;
 import com.healthware.entity.Department;
 import com.healthware.exception.BusinessException;
+import com.healthware.entity.Doctor;
 import com.healthware.mapper.DepartmentMapper;
+import com.healthware.mapper.DoctorMapper;
 import com.healthware.service.DepartmentService;
 import com.healthware.vo.DepartmentVO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,6 +22,9 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     @Autowired
     private DepartmentMapper departmentMapper;
+
+    @Autowired
+    private DoctorMapper doctorMapper;
 
     @Override
     public List<DepartmentVO> listAll() {
@@ -77,6 +83,16 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     public void deleteDepartment(Long id) {
-        departmentMapper.deleteById(id);
+        Long doctorCount = doctorMapper.selectCount(
+                new LambdaQueryWrapper<Doctor>().eq(Doctor::getDepartmentId, id));
+        if (doctorCount > 0) {
+            throw new BusinessException(ResultCode.BAD_REQUEST.getCode(),
+                    "该科室下有 " + doctorCount + " 名医生，请先删除或转移医生后再删除科室");
+        }
+        try {
+            departmentMapper.deleteById(id);
+        } catch (DataIntegrityViolationException e) {
+            throw new BusinessException(ResultCode.BAD_REQUEST.getCode(), "该科室存在关联数据，无法删除");
+        }
     }
 }

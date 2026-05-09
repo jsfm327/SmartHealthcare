@@ -9,6 +9,8 @@ import com.healthware.dto.AppointmentDTO;
 import com.healthware.entity.Registration;
 import com.healthware.entity.Schedule;
 import com.healthware.exception.BusinessException;
+import com.healthware.entity.Doctor;
+import com.healthware.mapper.DoctorMapper;
 import com.healthware.mapper.RegistrationMapper;
 import com.healthware.mapper.ScheduleMapper;
 import com.healthware.service.RegistrationService;
@@ -29,6 +31,9 @@ public class RegistrationServiceImpl implements RegistrationService {
 
     @Autowired
     private ScheduleMapper scheduleMapper;
+
+    @Autowired
+    private DoctorMapper doctorMapper;
 
     @Override
     @Transactional
@@ -55,13 +60,15 @@ public class RegistrationServiceImpl implements RegistrationService {
         }
         String registrationNo = datePrefix + String.format("%04d", seq);
 
+        Doctor doctor = doctorMapper.selectById(schedule.getDoctorId());
+        Long departmentId = doctor != null ? doctor.getDepartmentId() : null;
+
         Registration registration = new Registration();
         registration.setRegistrationNo(registrationNo);
         registration.setUserId(userId);
         registration.setPatientId(dto.getPatientId());
-        registration.setDoctorId(dto.getDoctorId());
-        registration.setDepartmentId(dto.getDepartmentId());
-        registration.setRoomId(schedule.getRoomId());
+        registration.setDoctorId(schedule.getDoctorId());
+        registration.setDepartmentId(departmentId);
         registration.setScheduleId(dto.getScheduleId());
         registration.setRegistrationDate(schedule.getScheduleDate());
         registration.setTimeSlot(schedule.getTimeSlot());
@@ -145,5 +152,10 @@ public class RegistrationServiceImpl implements RegistrationService {
         }
         reg.setStatus(Constants.REG_STATUS_VISITED);
         registrationMapper.updateById(reg);
+    }
+
+    @Override
+    public List<RegistrationVO> listByDoctorId(Long doctorId) {
+        return registrationMapper.selectByDoctorId(doctorId);
     }
 }

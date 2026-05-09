@@ -12,4 +12,6 @@ public interface PrescriptionService {
     PrescriptionVO getByRegistrationId(Long registrationId);
 
     void confirmDispense(Long id);
+
+    void updatePrescription(Long id, PrescriptionDTO dto);
 }

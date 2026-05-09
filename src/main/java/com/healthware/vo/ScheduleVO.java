@@ -11,8 +11,6 @@ public class ScheduleVO {
     private Long id;
     private Long doctorId;
     private String doctorName;
-    private Long roomId;
-    private String roomName;
     private Long departmentId;
     private String departmentName;
     private LocalDate scheduleDate;

@@ -6,7 +6,7 @@
         SELECT p.id, p.registration_id AS registrationId,
                p.doctor_id AS doctorId, d.name AS doctorName,
                p.patient_id AS patientId, pt.name AS patientName,
-               p.diagnosis, p.medicine_list AS medicineList,
+               p.medicine_list AS medicineList,
                p.total_amount AS totalAmount, p.notes, p.status,
                p.create_time AS createTime
         FROM prescription p
@@ -19,7 +19,7 @@
         SELECT p.id, p.registration_id AS registrationId,
                p.doctor_id AS doctorId, d.name AS doctorName,
                p.patient_id AS patientId, pt.name AS patientName,
-               p.diagnosis, p.medicine_list AS medicineList,
+               p.medicine_list AS medicineList,
                p.total_amount AS totalAmount, p.notes, p.status,
                p.create_time AS createTime
         FROM prescription p

@@ -3,7 +3,7 @@
 <mapper namespace="com.healthware.mapper.DoctorMapper">
 
     <select id="selectDetailById" resultType="com.healthware.vo.DoctorVO">
-        SELECT d.id, d.name, d.gender, d.department_id AS departmentId, dept.name AS departmentName,
+        SELECT d.id, d.username, d.name, d.gender, d.department_id AS departmentId, dept.name AS departmentName,
                d.title, d.specialty, d.introduction, d.avatar, d.phone, d.status
         FROM doctor d
         LEFT JOIN department dept ON dept.id = d.department_id
@@ -11,11 +11,15 @@
     </select>
 
     <select id="selectByDepartmentId" resultType="com.healthware.vo.DoctorVO">
-        SELECT d.id, d.name, d.gender, d.department_id AS departmentId, dept.name AS departmentName,
+        SELECT d.id, d.username, d.name, d.gender, d.department_id AS departmentId, dept.name AS departmentName,
                d.title, d.specialty, d.introduction, d.avatar, d.phone, d.status
         FROM doctor d
         LEFT JOIN department dept ON dept.id = d.department_id
         WHERE d.department_id = #{deptId} AND d.status = 1
+    </select>
+
+    <select id="selectByUsername" resultType="com.healthware.entity.Doctor">
+        SELECT * FROM doctor WHERE username = #{username}
     </select>
 
 </mapper>

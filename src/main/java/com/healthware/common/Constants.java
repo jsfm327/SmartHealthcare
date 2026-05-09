@@ -8,8 +8,8 @@ public class Constants {
 
     public static final String USER_TOKEN_PREFIX = "user:token:";
     public static final String ADMIN_TOKEN_PREFIX = "admin:token:";
+    public static final String DOCTOR_TOKEN_PREFIX = "doctor:token:";
     public static final String LOGIN_FAIL_PREFIX = "user:login:fail:";
-    public static final String CAPTCHA_PREFIX = "captcha:";
 
     public static final int MAX_LOGIN_FAIL_COUNT = 5;
     public static final long LOGIN_LOCK_DURATION = 1800L; // 30分钟（秒）

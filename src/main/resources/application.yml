@@ -15,10 +15,10 @@ spring:
   ai:
     openai:
       base-url: https://dashscope.aliyuncs.com/compatible-mode
-      api-key: ${DASHSCOPE_API_KEY:sk-xxx}
+      api-key: ${DASHSCOPE_API_KEY:sk-690ec9fb9ff74912b64f21d253105ded}
       chat:
         options:
-          model: qwen-plus
+          model: qwen3.5-flash
           temperature: 0.7
 
 mybatis-plus:
@@ -36,6 +36,14 @@ mybatis-plus:
 jwt:
   secret: healthware-jwt-secret-key-2026-secure
   expiration: 7200000
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    tags-sorter: alpha
+    operations-sorter: alpha
 
 logging:
   level:

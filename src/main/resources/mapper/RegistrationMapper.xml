@@ -8,7 +8,6 @@
                r.patient_id AS patientId, p.name AS patientName,
                r.doctor_id AS doctorId, d.name AS doctorName,
                r.department_id AS departmentId, dept.name AS departmentName,
-               r.room_id AS roomId, rm.name AS roomName,
                r.registration_date AS registrationDate, r.time_slot AS timeSlot,
                r.queue_number AS queueNumber, r.status, r.cancel_reason AS cancelReason,
                r.create_time AS createTime
@@ -17,7 +16,6 @@
         LEFT JOIN patient p ON p.id = r.patient_id
         LEFT JOIN doctor d ON d.id = r.doctor_id
         LEFT JOIN department dept ON dept.id = r.department_id
-        LEFT JOIN room rm ON rm.id = r.room_id
         WHERE r.id = #{id}
     </select>
 
@@ -27,7 +25,6 @@
                r.patient_id AS patientId, p.name AS patientName,
                r.doctor_id AS doctorId, d.name AS doctorName,
                r.department_id AS departmentId, dept.name AS departmentName,
-               r.room_id AS roomId, rm.name AS roomName,
                r.registration_date AS registrationDate, r.time_slot AS timeSlot,
                r.queue_number AS queueNumber, r.status, r.cancel_reason AS cancelReason,
                r.create_time AS createTime
@@ -36,7 +33,6 @@
         LEFT JOIN patient p ON p.id = r.patient_id
         LEFT JOIN doctor d ON d.id = r.doctor_id
         LEFT JOIN department dept ON dept.id = r.department_id
-        LEFT JOIN room rm ON rm.id = r.room_id
         WHERE r.user_id = #{userId}
         ORDER BY r.create_time DESC
     </select>
@@ -50,6 +46,31 @@
         SELECT registration_no FROM registration
         WHERE registration_no LIKE #{datePrefix}
         ORDER BY registration_no DESC LIMIT 1
+    </select>
+
+    <update id="expirePastRegistrations">
+        UPDATE registration SET status = 3, update_time = NOW()
+        WHERE status = 0 AND registration_date &lt; #{today}
+    </update>
+
+    <select id="selectByDoctorId" resultType="com.healthware.vo.RegistrationVO">
+        SELECT r.id, r.registration_no AS registrationNo,
+               r.user_id AS userId, u.username AS userName,
+               r.patient_id AS patientId, p.name AS patientName,
+               r.doctor_id AS doctorId, d.name AS doctorName,
+               r.department_id AS departmentId, dept.name AS departmentName,
+               r.registration_date AS registrationDate, r.time_slot AS timeSlot,
+               r.queue_number AS queueNumber, r.status, r.cancel_reason AS cancelReason,
+               r.create_time AS createTime
+        FROM registration r
+        LEFT JOIN user u ON u.id = r.user_id
+        LEFT JOIN patient p ON p.id = r.patient_id
+        LEFT JOIN doctor d ON d.id = r.doctor_id
+        LEFT JOIN department dept ON dept.id = r.department_id
+        WHERE r.doctor_id = #{doctorId}
+          AND r.registration_date = CURDATE()
+          AND r.status = 0
+        ORDER BY r.queue_number ASC
     </select>
 
 </mapper>

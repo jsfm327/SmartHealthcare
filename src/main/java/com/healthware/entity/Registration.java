@@ -17,7 +17,6 @@ public class Registration {
     private Long patientId;
     private Long doctorId;
     private Long departmentId;
-    private Long roomId;
     private Long scheduleId;
     private LocalDate registrationDate;
     private Integer timeSlot;

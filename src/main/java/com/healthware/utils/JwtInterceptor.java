@@ -44,9 +44,14 @@ public class JwtInterceptor implements HandlerInterceptor {
             String role = jwtUtil.getRole(token);
 
             // 验证Redis中的Token是否存在
-            String redisKey = "admin".equals(role)
-                    ? Constants.ADMIN_TOKEN_PREFIX + userId
-                    : Constants.USER_TOKEN_PREFIX + userId;
+            String redisKey;
+            if ("admin".equals(role)) {
+                redisKey = Constants.ADMIN_TOKEN_PREFIX + userId;
+            } else if ("doctor".equals(role)) {
+                redisKey = Constants.DOCTOR_TOKEN_PREFIX + userId;
+            } else {
+                redisKey = Constants.USER_TOKEN_PREFIX + userId;
+            }
             Object cachedToken = redisUtil.get(redisKey);
             if (cachedToken == null || !token.equals(cachedToken.toString())) {
                 response.setStatus(401);

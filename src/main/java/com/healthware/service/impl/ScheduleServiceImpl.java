@@ -1,6 +1,5 @@
 package com.healthware.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.healthware.common.PageResult;
 import com.healthware.dto.ScheduleDTO;
@@ -22,15 +21,9 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     @Override
     public PageResult<ScheduleVO> listSchedules(int page, int size, String date, Long deptId) {
-        Page<Schedule> pageParam = new Page<>(page, size);
-        LambdaQueryWrapper<Schedule> wrapper = new LambdaQueryWrapper<>();
-        if (date != null) {
-            wrapper.eq(Schedule::getScheduleDate, date);
-        }
-        wrapper.orderByDesc(Schedule::getScheduleDate);
-        Page<Schedule> result = scheduleMapper.selectPage(pageParam, wrapper);
-        List<ScheduleVO> records = scheduleMapper.selectWithDetail(date, deptId);
-        return new PageResult<>(records, result.getTotal(), page, size);
+        Page<ScheduleVO> pageParam = new Page<>(page, size);
+        Page<ScheduleVO> result = scheduleMapper.selectWithDetail(pageParam, date, deptId);
+        return new PageResult<>(result.getRecords(), result.getTotal(), page, size);
     }
 
     @Override
@@ -39,8 +32,13 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 
     @Override
+    public ScheduleVO getDetail(Long id) {
+        return scheduleMapper.selectByIdWithDetail(id);
+    }
+
+    @Override
     public List<ScheduleVO> listByDate(String date) {
-        return scheduleMapper.selectWithDetail(date, null);
+        return scheduleMapper.selectWithDetail(new Page<>(), date, null).getRecords();
     }
 
     @Override

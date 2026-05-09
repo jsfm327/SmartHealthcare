@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__plugin_claude-mem_mcp-search__search",
+      "Bash(./mvnw test *)",
+      "Bash(JAVA_HOME=\"C:/Program Files/Java/jdk-17\" ./mvnw test)",
+      "Bash(JAVA_HOME=\"C:/Program Files/Java/jdk-17\" jar -tf ~/.m2/repository/com/baomidou/mybatis-plus-core/3.5.7/mybatis-plus-core-3.5.7.jar)",
+      "Bash(JAVA_HOME=\"C:/Program Files/Java/jdk-17\" jar -tf ~/.m2/repository/com/baomidou/mybatis-plus-extension/3.5.7/mybatis-plus-extension-3.5.7.jar)",
+      "Bash(JAVA_HOME=\"C:/Program Files/Java/jdk-17\" ./mvnw spring-boot:run)",
+      "Bash(JAVA_HOME=\"C:/Program Files/Java/jdk-17\" ./mvnw clean install -DskipTests)",
+      "Bash(JAVA_HOME=\"C:/Program Files/Java/jdk-17\" java -jar target/SmartHealthcare-0.0.1-SNAPSHOT.jar)",
+      "Bash(JAVA_HOME=\"C:/Program Files/Java/jdk-17\" jar -tf target/SmartHealthcare-0.0.1-SNAPSHOT.jar)",
+      "Bash(JAVA_HOME=\"C:/Program Files/Java/jdk-17\" ./mvnw dependency:build-classpath)",
+      "Bash(JAVA_HOME=\"C:/Program Files/Java/jdk-17\" ./mvnw spring-boot:run -Dspring-boot.run.jvmArguments=\"-Xdebug\")",
+      "Bash(netstat -ano)",
+      "Bash(findstr :8080)",
+      "Bash(taskkill *)",
+      "Bash(findstr LISTENING)",
+      "Bash(JAVA_HOME=\"C:/Program Files/Java/jdk-17\" ./mvnw test -Dtest=\"com.healthware.integration.*\" -pl .)"
+    ]
+  }
+}

@@ -1,5 +1,8 @@
 package com.healthware.service.impl;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.healthware.common.PageResult;
 import com.healthware.dto.MedicalRecordDTO;
 import com.healthware.entity.MedicalRecord;
 import com.healthware.mapper.MedicalRecordMapper;
@@ -40,5 +43,12 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
         BeanUtils.copyProperties(dto, record);
         record.setId(id);
         medicalRecordMapper.updateById(record);
+    }
+
+    @Override
+    public PageResult<MedicalRecordVO> listAll(int page, int size) {
+        Page<MedicalRecordVO> pageParam = new Page<>(page, size);
+        IPage<MedicalRecordVO> result = medicalRecordMapper.selectListPage(pageParam);
+        return new PageResult<>(result.getRecords(), result.getTotal(), page, size);
     }
 }
